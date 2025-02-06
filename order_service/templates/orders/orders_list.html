@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="mb-4">Список заказов</h2>
+
+    <ul class="list-group">
+      {% for order in orders %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'order_detail' order.pk %}" class="text-decoration-none">Заказ №{{ order.id }} - Стол {{ order.table_number }} - {{ order.get_status_display }}</a>
+          <div>
+            <a href="{% url 'order_update' order.pk %}" class="btn btn-sm btn-warning mx-2">✏️</a>
+            <a href="{% url 'order_delete' order.pk %}" class="btn btn-sm btn-danger">❌</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
+
+{% comment %} {% extends 'main.html' %}
+{% block content %}
+  <h2>Список заказов</h2>
+
+  <ul>
+    {% for order in orders %}
+      <li>
+        <a href="{% url 'order_detail' order.pk %}">Заказ №{{ order.id }} - Стол {{ order.table_number }}</a> - {{ order.get_status_display }}
+        <a href="{% url 'order_update' order.pk %}">✏️</a>
+        <a href="{% url 'order_delete' order.pk %}">❌</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %} {% endcomment %}

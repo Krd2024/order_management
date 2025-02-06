@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+{% block content %}
+  <h2>Добавить блюдо в заказ</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Добавить</button>
+  </form>
+
+  <h3>Список блюд:</h3>
+  <ul>
+    {% for item in menu_items %}
+      <li>{{ item.product_name }} - {{ item.price }} руб.</li>
+    {% empty %}
+      <p>Нет добавленных блюд</p>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'order_list' %}">Назад</a>
+{% endblock %}

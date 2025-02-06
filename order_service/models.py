@@ -19,6 +19,12 @@ class Order(models.Model):
         default="pending",
     )
 
+    # def clean_product_name(self):
+    #     table_number = self.cleaned_data.get("table_number", "")
+    #     if not table_number:  # Если пустое, заменяем на дефолтное значение
+    #         return "Не указано"
+    #     return table_number
+
     @property
     def items(self):
         """Возвращает список заказов"""
