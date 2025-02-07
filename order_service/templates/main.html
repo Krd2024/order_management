@@ -29,8 +29,9 @@
       
       nav {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
         background-color: #ffffff;
         padding: 15px;
         border-radius: 5px;
@@ -46,39 +47,92 @@
       }
       
       .main-container {
-        padding-top: 30px;
+        padding-top: 5px;
       }
-      .main-nav {
+      .main-menu {
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 10px;
       }
     </style>
 
     <title>Cafe</title>
   </head>
+
   <body>
     <div class="main-container">
       <div class="container">
+        <div class="main-menu">
+          <a class="btn btn-sm btn-primary" href="{% url 'main' %}">Главная</a>
+          <a class="btn btn-sm btn-primary" href="{% url 'create_order' %}">Добавить заказ</a>
+          <a class="btn btn-sm btn-primary" href="{% url 'order_list' %}">Список заказов</a>
+          <a class="btn btn-sm btn-primary" href="{% url 'order_list' %}">Выручка</a>
+        </div>
         <nav>
-          <a href="{% url 'main' %}">Главная</a>
-          <a href="{% url 'create_order' %}">Добавить заказ</a>
-          <a href="{% url 'order_list' %}">Список заказов</a>
-          <a href="{% url 'order_list' %}">Выручка</a>
-
           <hr />
-          <div class="main-nav">
-            <form method="get" action="{% url 'search_order_list' %}" style="display: inline-block; margin-left: 10px;">
-              <select name="choice_search" class="form-select form-select-sm" style="width: auto; display: inline-block;">
-                <option value="order_id">По номеру заказа</option>
-                <option value="table_number">По номеру стола</option>
-                <option value="status">По статусу</option>
-              </select> <input type="text" name="search" class="form-control form-control-sm" placeholder="" style="width: 180px; display: inline-block;" />
-              <button type="submit" class="btn btn-sm btn-primary">🔍 Искать</button>
-            </form>
-          </div>
-        </nav>
+          <!-- Форма поиска -->
+          <form method="get" action="{% url 'search_order_list' %}" style="display: inline-block; margin-left: 10px;">
+            <!-- Выбор типа поиска -->
+            <select name="choice_search" id="choice_search" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+              <option value="order_id">По номеру заказа</option>
+              <option value="table_number">По номеру стола</option>
+              <option value="status">По статусу</option>
+            </select>
 
-        <!-- Content block -->
+            <!-- Поле для ввода ID или номера стола -->
+            <input type="text" name="search" id="search_input" class="form-control form-control-sm" placeholder="Введите номер" style="width: 150px; display: inline-block;" />
+
+            <!-- Выбор статуса (по умолчанию скрыт) -->
+            <select name="status" id="status_select" class="form-select form-select-sm" style="width: auto; display: none;">
+              <option value="pending">В ожидании</option>
+              <option value="ready">Готово</option>
+              <option value="paid">Оплачено</option>
+            </select>
+
+            <button type="submit" class="btn btn-sm btn-primary">🔍 Искать</button>
+          </form>
+        </nav>
+        {% if messages %}
+          <div>
+            {% for message in messages %}
+              <div class="{% if message.tags == 'error' %}
+                  
+                  
+                  
+                  
+                  
+                  
+                        
+                text-danger
+
+
+
+
+
+
+
+                {% else %}
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  text-success
+
+
+
+
+
+
+
+                {% endif %}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="content-block">
           {% block content %}
 
@@ -87,4 +141,18 @@
       </div>
     </div>
   </body>
+  <script>
+    document.getElementById('choice_search').addEventListener('change', function () {
+      let searchInput = document.getElementById('search_input')
+      let statusSelect = document.getElementById('status_select')
+    
+      if (this.value === 'status') {
+        searchInput.style.display = 'none' // Скрыть текстовое поле
+        statusSelect.style.display = 'inline-block' // Показать выбор статуса
+      } else {
+        searchInput.style.display = 'inline-block' // Показать текстовое поле
+        statusSelect.style.display = 'none' // Скрыть выбор статуса
+      }
+    })
+  </script>
 </html>

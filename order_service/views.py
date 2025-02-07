@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.contrib import messages
 from .forms import OrderForm, MenuItemForm
 from .models import Order, OrderItem
 from loguru import logger
 
-# from .forms import OrderForm, MenuItemForm, OrderItemForm
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (
@@ -17,6 +17,7 @@ from django.views.generic import (
 
 
 def main(request):
+    """Главная страница"""
     return render(request, "main.html")
 
 
@@ -35,8 +36,9 @@ class OrderDetailView(DetailView):
     template_name = "orders/order_detail.html"
 
 
-# 🔹 Создание заказа
 class OrderCreateView(CreateView):
+    """Создание заказа"""
+
     model = Order
     form_class = OrderForm
     template_name = "orders/order_form.html"
@@ -63,39 +65,39 @@ class OrderDeleteView(DeleteView):
 
 
 def search_order_list(request):
-    search_query = request.GET.get("search", "").strip()  # Получаем введенное значение
+    search_query = request.GET.get("search", "").strip()  # Полуает введенное значение
     choice_search = request.GET.get("choice_search", "order_id")
 
     orders = Order.objects.all()
+    if choice_search == "status":  # Поиск по статусу
+        print(status := request.GET.get("status"))
+        orders = orders.filter(status=status)
+        return render(request, "orders/orders_list.html", {"orders": orders})
 
-    if search_query.isdigit():  # Проверяет, что введены только цифры
-        if choice_search == "order_id":  # Поиск по номеру заказа
-            orders = orders.filter(id=search_query)
-        elif choice_search == "table_number":  # Поиск по номеру стола
-            orders = orders.filter(table_number=search_query)
-    elif choice_search == "status":  # Поиск по статусу
-        print("--status---")
-        orders = orders.filter(status="ready")
+    if not search_query.isdigit():
+        messages.error(request, "Ошибка! В этом поиске буквы не участвуют.")
+        return redirect("order_list")  # Проверяет, что введены только цифры
 
+    if choice_search == "order_id":  # Поиск по номеру заказа
+        orders = orders.filter(id=search_query)
+
+    elif choice_search == "table_number":  # Поиск по номеру стола
+        orders = orders.filter(table_number=search_query)
     return render(request, "orders/orders_list.html", {"orders": orders})
 
 
 def create_order_view(request):
     # menu_items = []  # Список блюд для текущего заказа
     menu_items = request.session.get("menu_items", [])  # Список блюд из сессии
-    print("--------1--------------")
     if request.method == "POST":
         # Если форма для блюда была отправлена
-        print("-----2----")
-        print(request.POST.get)
         if "add_item" in request.POST:
-            print("-----3----")
+
             menu_item_form = MenuItemForm(request.POST)
             order_form = OrderForm(request.POST)
 
             if menu_item_form.is_valid():
                 # Добавляем блюдо в список
-                print("-----4----")
                 menu_items.append(
                     {
                         "product_name": menu_item_form.cleaned_data["product_name"],
@@ -122,6 +124,11 @@ def create_order_view(request):
 
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
+            # Проверяет, есть ли в заказе блюда
+            if request.session["menu_items"] == []:
+                messages.success(request, "Столик заказан.")
+                messages.error(request, "Cо своими напитками и едой нельзя!.")
+
             order_form = OrderForm(request.POST)
             if order_form.is_valid():
                 order = order_form.save()  # Сохраняем заказ
@@ -135,10 +142,12 @@ def create_order_view(request):
                         )
                     # Очистить список блюд
                     request.session["menu_items"] = []
+                    messages.success(request, "Заказ успешно создан!")
                     return redirect("order_list")
                 except Exception as e:
                     logger.error(f"❗Ошибка {e}")
             else:
+                messages.error(request, "Ошибка! Проверьте введенные данные.")
                 order_form = OrderForm(request.POST)
                 menu_item_form = MenuItemForm()
     else:
