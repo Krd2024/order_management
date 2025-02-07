@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from loguru import logger
+from .forms import OrderForm, MenuItemForm
 from .models import Order, OrderItem
-from .forms import OrderForm, MenuItemForm, OrderItemForm
+from loguru import logger
+
+# from .forms import OrderForm, MenuItemForm, OrderItemForm
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (
@@ -41,55 +43,41 @@ class OrderCreateView(CreateView):
     success_url = reverse_lazy("order_list")
 
 
-# 🔹 Обновление заказа
 class OrderUpdateView(UpdateView):
+    """Обновление заказа"""
+
     model = Order
     form_class = OrderForm
+    # menu_item_form = MenuItemForm
+    # template_name = "orders/create_order.html"
     template_name = "orders/order_form.html"
     success_url = reverse_lazy("order_list")
 
 
-# 🔹 Удаление заказа
 class OrderDeleteView(DeleteView):
+    """Удаление заказа"""
+
     model = Order
     template_name = "orders/order_confirm_delete.html"
     success_url = reverse_lazy("order_list")
 
 
-def menu_input_view(request):
-    menu_items = request.session.get(
-        "menu_items", []
-    )  # Загружаем список блюд из сессии
+def search_order_list(request):
+    search_query = request.GET.get("search", "").strip()  # Получаем введенное значение
+    choice_search = request.GET.get("choice_search", "order_id")
 
-    logger.info(menu_items)
+    orders = Order.objects.all()
 
-    if request.method == "POST":
-        form = MenuItemForm(request.POST)
-        if form.is_valid():
-            # Добавляем блюдо в список
-            menu_items.append(
-                {
-                    "product_name": form.cleaned_data["product_name"],
-                    "price": float(form.cleaned_data["price"]),
-                }
-            )
-            request.session["menu_items"] = menu_items  # Сохраняем в сессии
+    if search_query.isdigit():  # Проверяет, что введены только цифры
+        if choice_search == "order_id":  # Поиск по номеру заказа
+            orders = orders.filter(id=search_query)
+        elif choice_search == "table_number":  # Поиск по номеру стола
+            orders = orders.filter(table_number=search_query)
+    elif choice_search == "status":  # Поиск по статусу
+        print("--status---")
+        orders = orders.filter(status="ready")
 
-            logger.info(menu_items)
-
-            form = MenuItemForm()  # Очищаем форму после отправки
-    else:
-        form = MenuItemForm()
-
-    return render(
-        request, "orders/menu_input.html", {"form": form, "menu_items": menu_items}
-    )
-
-
-# =================================================================
-from django.shortcuts import render, redirect
-from .forms import OrderForm, MenuItemForm
-from .models import Order, OrderItem
+    return render(request, "orders/orders_list.html", {"orders": orders})
 
 
 def create_order_view(request):
@@ -135,7 +123,6 @@ def create_order_view(request):
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
             order_form = OrderForm(request.POST)
-
             if order_form.is_valid():
                 order = order_form.save()  # Сохраняем заказ
                 try:
@@ -148,18 +135,15 @@ def create_order_view(request):
                         )
                     # Очистить список блюд
                     request.session["menu_items"] = []
-
                     return redirect("order_list")
                 except Exception as e:
                     logger.error(f"❗Ошибка {e}")
             else:
                 order_form = OrderForm(request.POST)
                 menu_item_form = MenuItemForm()
-
     else:
         order_form = OrderForm()
         menu_item_form = MenuItemForm()
-
     return render(
         request,
         "orders/create_order.html",

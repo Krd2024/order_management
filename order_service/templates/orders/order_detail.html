@@ -14,7 +14,7 @@
       <strong>Общая сумма:</strong> {{ order.total_price }} руб.
     </p>
 
-    <h3 class="mt-4">Товары:</h3>
+    <h3 class="mt-4">На столе:</h3>
     <ul class="list-group mb-4">
       {% for item in order.items.all %}
         <li class="list-group-item">{{ item.product_name }} - {{ item.price }} руб.</li>

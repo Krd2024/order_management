@@ -5,19 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
-      /* Custom styles */
       body {
         background-color: #f8f9fa;
         font-family: Arial, sans-serif;
         color: #333;
       }
       
-      /* Container for content */
       .container {
         margin-top: 30px;
       }
       
-      /* Navigation links */
       nav a {
         color: #007bff;
         font-weight: bold;
@@ -30,8 +27,10 @@
         color: #0056b3;
       }
       
-      /* Styling for the header links */
       nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
         background-color: #ffffff;
         padding: 15px;
         border-radius: 5px;
@@ -39,7 +38,6 @@
         margin-bottom: 20px;
       }
       
-      /* Block content */
       .content-block {
         background-color: #ffffff;
         padding: 20px;
@@ -47,9 +45,12 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
       
-      /* Add some space at the top */
       .main-container {
         padding-top: 30px;
+      }
+      .main-nav {
+        display: flex;
+        flex-wrap: wrap;
       }
     </style>
 
@@ -58,11 +59,23 @@
   <body>
     <div class="main-container">
       <div class="container">
-        <!-- Navigation -->
         <nav>
           <a href="{% url 'main' %}">Главная</a>
-          <a href="{% url 'create_order' %}">Добавить новый заказ</a>
+          <a href="{% url 'create_order' %}">Добавить заказ</a>
           <a href="{% url 'order_list' %}">Список заказов</a>
+          <a href="{% url 'order_list' %}">Выручка</a>
+
+          <hr />
+          <div class="main-nav">
+            <form method="get" action="{% url 'search_order_list' %}" style="display: inline-block; margin-left: 10px;">
+              <select name="choice_search" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                <option value="order_id">По номеру заказа</option>
+                <option value="table_number">По номеру стола</option>
+                <option value="status">По статусу</option>
+              </select> <input type="text" name="search" class="form-control form-control-sm" placeholder="" style="width: 180px; display: inline-block;" />
+              <button type="submit" class="btn btn-sm btn-primary">🔍 Искать</button>
+            </form>
+          </div>
         </nav>
 
         <!-- Content block -->
@@ -75,34 +88,3 @@
     </div>
   </body>
 </html>
-
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-
-    <title>Cafe</title>
-  </head>
-  <body>
-    <div>
-      <div>
-        <a href="{% url 'main' %}">Главная</a>
-      </div>
-      <div>
-        <a href="{% url 'create_order' %}">Добавить новый заказ</a>
-      </div>
-      <div>
-        <a href="{% url 'order_list' %}">Список заказов</a>
-      </div>
-      <div>
-        <div>
-          {% block content %}
-
-          {% endblock %}
-        </div>
-      </div>
-    </div>
-  </body>
-</html> {% endcomment %}
