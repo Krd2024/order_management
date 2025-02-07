@@ -75,7 +75,7 @@ def search_order_list(request):
         return render(request, "orders/orders_list.html", {"orders": orders})
 
     if not search_query.isdigit():
-        messages.error(request, "Ошибка! В этом поиске буквы не участвуют.")
+        messages.error(request, "Ошибка! Проверьте введенные данные.")
         return redirect("order_list")  # Проверяет, что введены только цифры
 
     if choice_search == "order_id":  # Поиск по номеру заказа
@@ -109,6 +109,7 @@ def create_order_view(request):
 
                 menu_item_form = MenuItemForm()  # Очищаем форму после отправки
             else:
+                # Если форма не валидна
                 order_form = OrderForm()
                 menu_item_form = MenuItemForm()
 
@@ -126,8 +127,8 @@ def create_order_view(request):
         elif "submit_order" in request.POST:
             # Проверяет, есть ли в заказе блюда
             if request.session["menu_items"] == []:
-                messages.success(request, "Столик заказан.")
-                messages.error(request, "Cо своими напитками и едой нельзя!.")
+                messages.success(request, "Заказан пустой столик.")
+                messages.error(request, "Cо своими напитками и едой нельзя!")
 
             order_form = OrderForm(request.POST)
             if order_form.is_valid():

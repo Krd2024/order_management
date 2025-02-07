@@ -1,47 +1,28 @@
 {% extends 'main.html' %}
-
 {% block content %}
-  <div class="container">
-    <h2 class="mb-4">Заказ №{{ order.id }}</h2>
+  <div class="container mt-4">
+    <div class="card p-4 shadow">
+      <h4 class="text-primary">Детали заказа</h4>
 
-    <p>
-      <strong>Стол:</strong> {{ order.table_number }}
-    </p>
-    <p>
-      <strong>Статус:</strong> {{ order.get_status_display }}
-    </p>
-    <p>
-      <strong>Общая сумма:</strong> {{ order.total_price }} руб.
-    </p>
+      <p>
+        <strong>Стол:</strong> <span class="badge bg-info text-dark">{{ order.table_number }}</span>
+      </p>
+      <p>
+        <strong>Статус:</strong> <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+      </p>
+      <p>
+        <strong>Общая сумма:</strong> <span class="fw-bold text-success">{{ order.total_price }} руб.</span>
+      </p>
 
-    <h3 class="mt-4">На столе:</h3>
-    <ul class="list-group mb-4">
-      {% for item in order.items.all %}
-        <li class="list-group-item">{{ item.product_name }} - {{ item.price }} руб.</li>
-      {% endfor %}
-    </ul>
-
-    <div class="d-flex justify-content-between">
-      <a href="{% url 'order_update' order.pk %}" class="btn btn-warning">Редактировать</a>
-      <a href="{% url 'order_list' %}" class="btn btn-secondary">Назад</a>
+      <h3 class="mt-4">На столе:</h3>
+      <ul class="list-group mb-4">
+        {% for item in order.items.all %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ item.product_name }}
+            <span class="badge bg-secondary">{{ item.price }} руб.</span>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
 {% endblock %}
-
-{% comment %} {% extends 'main.html' %}
-{% block content %}
-  <h2>Заказ №{{ order.id }}</h2>
-  <p>Стол: {{ order.table_number }}</p>
-  <p>Статус: {{ order.get_status_display }}</p>
-  <p>Общая сумма: {{ order.total_price }} руб.</p>
-
-  <h3>Товары:</h3>
-  <ul>
-    {% for item in order.items.all %}
-      <li>{{ item.product_name }} - {{ item.price }} руб.</li>
-    {% endfor %}
-  </ul>
-
-  <a href="{% url 'order_update' order.pk %}">Редактировать</a>
-  <a href="{% url 'order_list' %}">Назад</a>
-{% endblock %} {% endcomment %}

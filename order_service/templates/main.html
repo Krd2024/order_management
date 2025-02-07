@@ -55,6 +55,13 @@
         justify-content: space-between;
         margin-bottom: 10px;
       }
+      .success {
+        color: green;
+      }
+      
+      .error {
+        color: red;
+      }
     </style>
 
     <title>Cafe</title>
@@ -64,10 +71,10 @@
     <div class="main-container">
       <div class="container">
         <div class="main-menu">
-          <a class="btn btn-sm btn-primary" href="{% url 'main' %}">Главная</a>
-          <a class="btn btn-sm btn-primary" href="{% url 'create_order' %}">Добавить заказ</a>
-          <a class="btn btn-sm btn-primary" href="{% url 'order_list' %}">Список заказов</a>
-          <a class="btn btn-sm btn-primary" href="{% url 'order_list' %}">Выручка</a>
+          <a class="btn btn-outline-success" href="{% url 'main' %}">Главная</a>
+          <a class="btn btn-outline-success" href="{% url 'create_order' %}">Добавить заказ</a>
+          <a class="btn btn-outline-success" href="{% url 'order_list' %}">Список заказов</a>
+          <a class="btn btn-outline-success" href="{% url 'order_list' %}">Выручка</a>
         </div>
         <nav>
           <hr />
@@ -94,43 +101,11 @@
           </form>
         </nav>
         {% if messages %}
-          <div>
+          <ul>
             {% for message in messages %}
-              <div class="{% if message.tags == 'error' %}
-                  
-                  
-                  
-                  
-                  
-                  
-                        
-                text-danger
-
-
-
-
-
-
-
-                {% else %}
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  text-success
-
-
-
-
-
-
-
-                {% endif %}">{{ message }}</div>
+              <li class="{{ message.tags }}">{{ message }}</li>
             {% endfor %}
-          </div>
+          </ul>
         {% endif %}
 
         <div class="content-block">

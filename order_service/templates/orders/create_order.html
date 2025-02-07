@@ -8,7 +8,7 @@
       {% csrf_token %}
       {% comment %} <h3 class="mb-3" style="font-size: 1.2rem;">Выберите столик и статус заказа</h3> {% endcomment %}
       <div class="mb-3">{{ order_form.as_p }}</div>
-      <button type="submit" name="submit_order" class="btn btn-primary btn-sm">Сохранить заказ</button>
+      <button type="submit" name="submit_order" class="btn btn-outline-success">Сохранить заказ</button>
     </form>
 
     <hr />
@@ -16,7 +16,7 @@
     <form method="post" class="mb-3">
       {% csrf_token %}
       <div class="mb-3">{{ menu_item_form.as_p }}</div>
-      <button type="submit" name="add_item" class="btn btn-success btn-sm">Добавить блюдо</button>
+      <button type="submit" name="add_item" class="btn btn-outline-success">Добавить блюдо</button>
     </form>
 
     <h3 class="mt-4 mb-3" style="font-size: 1.2rem;">Текущий список блюд:</h3>
