@@ -51,35 +51,3 @@
     }
   </style>
 {% endblock %}
-
-{% comment %} {% extends 'main.html' %}
-{% block content %}
-  <h2>Создать заказ</h2>
-
-  <form method="post">
-    {% csrf_token %}
-
-    <h3>Выберите столик и статус заказа</h3>
-    {{ order_form.as_p }}
-    <button type="submit" name="submit_order">Сохранить заказ</button>
-    {% if order_form.table_number.errors %}
-      <div style="display: none;"></div> <!-- Скрытие блока ошибки -->
-    {% endif %}
-  </form>
-
-  <h3>Добавить блюдо в заказ</h3>
-  <form method="post">
-    {% csrf_token %}
-    {{ menu_item_form.as_p }}
-    <button type="submit" name="add_item">Добавить блюдо</button>
-  </form>
-
-  <h3>Текущий список блюд:</h3>
-  <ul>
-    {% for item in menu_items %}
-      <li>{{ item.product_name }} - {{ item.price }} руб.</li>
-    {% empty %}
-      <p>Нет добавленных блюд</p>
-    {% endfor %}
-  </ul>
-{% endblock %} {% endcomment %}

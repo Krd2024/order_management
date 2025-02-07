@@ -1,34 +1,56 @@
 {% extends 'main.html' %}
 
 {% block content %}
-  <div class="container">
-    <h2 class="mb-4">Список заказов</h2>
+  <div class="container mt-5">
+    <div class="card p-4 shadow-lg">
+      <h2 class="mb-4 text-center text-primary">Список заказов</h2>
 
-    <ul class="list-group">
-      {% for order in orders %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <a href="{% url 'order_detail' order.pk %}" class="text-decoration-none">Заказ №{{ order.id }} - Стол {{ order.table_number }} - {{ order.get_status_display }}</a>
-          <div>
-            <a href="{% url 'order_update' order.pk %}" class="btn btn-sm btn-warning mx-2">✏️</a>
-            <a href="{% url 'order_delete' order.pk %}" class="btn btn-sm btn-danger">❌</a>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+      {% if orders %}
+        <ul class="list-group">
+          {% for order in orders %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="{% url 'order_detail' order.pk %}" class="text-decoration-none fw-bold text-dark w-100">
+                <div class="d-flex flex-column">
+                  <div class="text-center">
+                    <span class="fs-5 d-inline-block">🍽️ Заказ <strong>#{{ order.id }}</strong></span>
+                  </div>
+                  <span class="text-muted">Стол: <strong>{{ order.table_number }}</strong></span>
+                  {% if order.get_status_display == 'Готов' %}
+                    <span class="gotov">{{ order.get_status_display }}</span>
+                  {% else %}
+                    {% if order.get_status_display == 'Оплачено' %}
+                      <span class="oplacheno">{{ order.get_status_display }}</span>
+                    {% else %}
+                      {% if order.get_status_display == 'В ожидании' %}
+                        <span class="oplata-potom">{{ order.get_status_display }}</span>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </a>
+              <div class="btn-group">
+                <a href="{% url 'order_update' order.pk %}" class="btn btn-sm btn-outline-warning" title="Редактировать">✏️</a>
+                <a href="{% url 'order_delete' order.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">❌</a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-center text-muted">Заказов пока нет.</p>
+      {% endif %}
+    </div>
   </div>
+  <style>
+    .fs-5 {
+    }
+    .gotov {
+      color: #198754;
+    }
+    .oplata-potom {
+      color: #ffc107;
+    }
+    .oplacheno {
+      color: #0d6efd;
+    }
+  </style>
 {% endblock %}
-
-{% comment %} {% extends 'main.html' %}
-{% block content %}
-  <h2>Список заказов</h2>
-
-  <ul>
-    {% for order in orders %}
-      <li>
-        <a href="{% url 'order_detail' order.pk %}">Заказ №{{ order.id }} - Стол {{ order.table_number }}</a> - {{ order.get_status_display }}
-        <a href="{% url 'order_update' order.pk %}">✏️</a>
-        <a href="{% url 'order_delete' order.pk %}">❌</a>
-      </li>
-    {% endfor %}
-  </ul>
-{% endblock %} {% endcomment %}

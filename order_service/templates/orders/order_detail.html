@@ -2,17 +2,18 @@
 {% block content %}
   <div class="container mt-4">
     <div class="card p-4 shadow">
-      <h4 class="text-primary">Детали заказа</h4>
-
-      <p>
-        <strong>Стол:</strong> <span class="badge bg-info text-dark">{{ order.table_number }}</span>
-      </p>
-      <p>
-        <strong>Статус:</strong> <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
-      </p>
-      <p>
-        <strong>Общая сумма:</strong> <span class="fw-bold text-success">{{ order.total_price }} руб.</span>
-      </p>
+      <div class="container text-center mt-4">
+        <p class="fs-4 mb-1">
+          <strong>Стол:</strong> <span class="badge text-muted text-dark fs-2">{{ order.table_number }}</span>
+        </p>
+        <p class="fs-4 mb-1">
+          <strong>Статус:</strong> <span class="badge text-dark fs-4">{{ order.get_status_display }}</span>
+        </p>
+        <p class="fs-4 mb-1">
+          <strong>Общая сумма:</strong> <span class="fw-bold text-success fs-3">{{ order.total_price }} руб.</span>
+        </p>
+      </div>
+      <hr />
 
       <h3 class="mt-4">На столе:</h3>
       <ul class="list-group mb-4">
@@ -23,6 +24,22 @@
           </li>
         {% endfor %}
       </ul>
+      <div class="card-detail">
+        <a class="btn btn-outline-success" href="{% url 'order_update' order.pk %}">Редактировать</a>
+        <a class="btn btn-outline-success" href="{% url 'order_list' %}">Назад</a>
+      </div>
     </div>
   </div>
+  <style>
+    .card-detail {
+      display: flex;
+      justify-content: space-around;
+    }
+    .card.p-4.shadow {
+      padding-top: 0 !important;
+    }
+    .container.text-center.mt-4 {
+      margin-top: 10px !important;
+    }
+  </style>
 {% endblock %}

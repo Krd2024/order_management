@@ -13,7 +13,7 @@ class Order(models.Model):
         max_length=10,
         choices=[
             ("pending", "В ожидании"),
-            ("ready", "Готово"),
+            ("ready", "Готов"),
             ("paid", "Оплачено"),
         ],
         default="pending",
