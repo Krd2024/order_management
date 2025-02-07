@@ -6,4 +6,7 @@ class OrderServiceConfig(AppConfig):
     name = "order_service"
 
     def ready(self):
+        """Подключает сигнал обновления общей суммы
+        при добавлении или удалении блюда
+        """
         import order_service.service.signal.total_price  # noqa

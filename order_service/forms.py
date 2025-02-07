@@ -5,6 +5,7 @@ from .models import Order, OrderItem
 class OrderForm(forms.ModelForm):
     table_number = forms.IntegerField(
         label="Номер стола",
+        min_value=1,
         # required=False,
         widget=forms.NumberInput(attrs={"class": "form-control form-control-sm"}),
     )
@@ -48,22 +49,22 @@ class MenuItemForm(forms.Form):
     )
 
 
-class CombinedOrderForm(forms.ModelForm):
-    """Форма заказа + список блюд"""
+# class CombinedOrderForm(forms.ModelForm):
+#     """Форма заказа + список блюд"""
 
-    # Поле для ввода блюд (списком)
-    product_name = forms.CharField(
-        label="Название блюда",
-        max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-    )
-    price = forms.DecimalField(
-        label="Цена",
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
+#     # Поле для ввода блюд (списком)
+#     product_name = forms.CharField(
+#         label="Название блюда",
+#         max_length=255,
+#         widget=forms.TextInput(attrs={"class": "form-control"}),
+#     )
+#     price = forms.DecimalField(
+#         label="Цена",
+#         max_digits=10,
+#         decimal_places=2,
+#         widget=forms.NumberInput(attrs={"class": "form-control"}),
+#     )
 
-    class Meta:
-        model = Order
-        fields = ["table_number", "status"]
+#     class Meta:
+#         model = Order
+#         fields = ["table_number", "status"]

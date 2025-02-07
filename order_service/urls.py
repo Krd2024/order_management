@@ -6,6 +6,7 @@ from .views import (
     OrderListView,
     OrderUpdateView,
     create_order_view,
+    dish_delete,
     main,
     search_order_list,
     # menu_input_view,
@@ -21,4 +22,5 @@ urlpatterns = [
     # path("menu-input/", menu_input_view, name="menu_input"),
     path("create-order/", create_order_view, name="create_order"),
     path("filter-order/", search_order_list, name="search_order_list"),
+    path("dish-delete/<int:pk>/", dish_delete, name="dish_delete"),
 ]

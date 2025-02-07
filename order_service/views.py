@@ -5,12 +5,11 @@ from .forms import OrderForm, MenuItemForm
 from .models import Order, OrderItem
 from loguru import logger
 
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (
     ListView,
     DetailView,
-    CreateView,
+    # CreateView,
     UpdateView,
     DeleteView,
 )
@@ -36,13 +35,13 @@ class OrderDetailView(DetailView):
     template_name = "orders/order_detail.html"
 
 
-class OrderCreateView(CreateView):
-    """Создание заказа"""
+# class OrderCreateView(CreateView):
+#     """Создание заказа"""
 
-    model = Order
-    form_class = OrderForm
-    template_name = "orders/order_form.html"
-    success_url = reverse_lazy("order_list")
+#     model = Order
+#     form_class = OrderForm
+#     template_name = "orders/order_form.html"
+#     success_url = reverse_lazy("order_list")
 
 
 class OrderUpdateView(UpdateView):
@@ -60,39 +59,64 @@ class OrderDeleteView(DeleteView):
     """Удаление заказа"""
 
     model = Order
+    # Прейти на страницу подтверждения удаления
     template_name = "orders/order_confirm_delete.html"
     success_url = reverse_lazy("order_list")
 
 
 def search_order_list(request):
-    search_query = request.GET.get("search", "").strip()  # Полуает введенное значение
-    choice_search = request.GET.get("choice_search", "order_id")
+    """
+    Функция для поиска заказов по разным параметрам.
+
+    Первым проверяеся запросна изменение статуса
+    Если не статус, значит запрос должен бать числом для ID заказа
+    или номера стола.
+    """
+
+    # Полуает введенное значение
+    choice_search = request.GET.get("choice_search")
 
     orders = Order.objects.all()
-    if choice_search == "status":  # Поиск по статусу
+
+    # Поиск по статусу
+    if choice_search == "status":
         print(status := request.GET.get("status"))
         orders = orders.filter(status=status)
         return render(request, "orders/orders_list.html", {"orders": orders})
 
+    # Получает введенную строку поиска и удаляет пробелы
+    search_query = request.GET.get("search", "").strip()
+
+    # Если строка поиска не является числом, выводим ошибку
     if not search_query.isdigit():
         messages.error(request, "Ошибка! Проверьте введенные данные.")
-        return redirect("order_list")  # Проверяет, что введены только цифры
+        return redirect("order_list")
 
-    if choice_search == "order_id":  # Поиск по номеру заказа
+    # Поиск по номеру заказа
+    if choice_search == "order_id":
         orders = orders.filter(id=search_query)
 
-    elif choice_search == "table_number":  # Поиск по номеру стола
+    # Поиск по номеру стола
+    elif choice_search == "table_number":
         orders = orders.filter(table_number=search_query)
     return render(request, "orders/orders_list.html", {"orders": orders})
 
 
 def create_order_view(request):
-    # menu_items = []  # Список блюд для текущего заказа
-    menu_items = request.session.get("menu_items", [])  # Список блюд из сессии
+    """Создание заказа и добавление блюд в заказ.
+    Создвёт список из блюд и цены
+
+    """
+
+    # Список блюд из сессии
+    menu_items = request.session.get("menu_items", [])
     if request.method == "POST":
         # Если форма для блюда была отправлена
         if "add_item" in request.POST:
+            count_product = 0
 
+            # Инициализация форм для добавления блюда и оформления заказа
+            # с переданными данными из POST-запроса
             menu_item_form = MenuItemForm(request.POST)
             order_form = OrderForm(request.POST)
 
@@ -102,35 +126,26 @@ def create_order_view(request):
                     {
                         "product_name": menu_item_form.cleaned_data["product_name"],
                         "price": float(menu_item_form.cleaned_data["price"]),
+                        "number": count_product,
                     }
                 )
-                request.session["menu_items"] = menu_items  # Сохраняем в сессии
-                logger.info(menu_items)
+                # Сохраняем в сессии
+                request.session["menu_items"] = menu_items
 
-                menu_item_form = MenuItemForm()  # Очищаем форму после отправки
-            else:
-                # Если форма не валидна
-                order_form = OrderForm()
+                logger.info(request.session)
+                # Очищаем форму после отправки
                 menu_item_form = MenuItemForm()
-
-            return render(
-                request,
-                "orders/create_order.html",
-                {
-                    "order_form": order_form,
-                    "menu_item_form": menu_item_form,
-                    "menu_items": menu_items,
-                },
-            )
+                count_product += 1
 
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
             # Проверяет, есть ли в заказе блюда
             if request.session["menu_items"] == []:
-                messages.success(request, "Заказан пустой столик.")
+                messages.success(request, "Заказан столик без блюд.")
                 messages.error(request, "Cо своими напитками и едой нельзя!")
 
             order_form = OrderForm(request.POST)
+
             if order_form.is_valid():
                 order = order_form.save()  # Сохраняем заказ
                 try:
@@ -143,14 +158,15 @@ def create_order_view(request):
                         )
                     # Очистить список блюд
                     request.session["menu_items"] = []
+                    count_product = 0
                     messages.success(request, "Заказ успешно создан!")
                     return redirect("order_list")
                 except Exception as e:
                     logger.error(f"❗Ошибка {e}")
+                    messages.error(request, "Ошибка при создании заказа.")
             else:
                 messages.error(request, "Ошибка! Проверьте введенные данные.")
-                order_form = OrderForm(request.POST)
-                menu_item_form = MenuItemForm()
+
     else:
         order_form = OrderForm()
         menu_item_form = MenuItemForm()
@@ -163,3 +179,12 @@ def create_order_view(request):
             "menu_items": menu_items,
         },
     )
+
+
+def dish_delete(request, pk):
+    """Удаляет блюдо из заказа и перенаправляет
+    обратно в детали заказа.
+    """
+    dish = get_object_or_404(OrderItem, pk=pk)
+    dish.delete()
+    return redirect("order_detail", pk=dish.order.pk)
