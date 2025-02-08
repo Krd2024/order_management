@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class User(AbstractUser):
@@ -7,7 +8,10 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    table_number = models.IntegerField(verbose_name="Номер стола")
+    table_number = models.IntegerField(
+        verbose_name="Номер стола",
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+    )
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(
         max_length=10,
@@ -18,12 +22,6 @@ class Order(models.Model):
         ],
         default="pending",
     )
-
-    # def clean_product_name(self):
-    #     table_number = self.cleaned_data.get("table_number", "")
-    #     if not table_number:  # Если пустое, заменяем на дефолтное значение
-    #         return "Не указано"
-    #     return table_number
 
     @property
     def items(self):

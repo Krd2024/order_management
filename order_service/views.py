@@ -111,7 +111,6 @@ def create_order_view(request):
     if request.method == "POST":
         # Если форма для блюда была отправлена
         if "add_item" in request.POST:
-            count_product = 0
 
             # Инициализация форм для добавления блюда и оформления заказа
             # с переданными данными из POST-запроса
@@ -124,7 +123,6 @@ def create_order_view(request):
                     {
                         "product_name": menu_item_form.cleaned_data["product_name"],
                         "price": float(menu_item_form.cleaned_data["price"]),
-                        "number": count_product,
                     }
                 )
                 # Сохраняем в сессии
@@ -133,7 +131,6 @@ def create_order_view(request):
                 logger.info(request.session)
                 # Очищаем форму после отправки
                 menu_item_form = MenuItemForm()
-                count_product += 1
 
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
