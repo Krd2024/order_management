@@ -104,10 +104,8 @@ def search_order_list(request):
 
 def create_order_view(request):
     """Создание заказа и добавление блюд в заказ.
-    Создвёт список из блюд и цены
-
+    Создвёт список из блюд и цены перед созданием заказа
     """
-
     # Список блюд из сессии
     menu_items = request.session.get("menu_items", [])
     if request.method == "POST":
@@ -144,10 +142,12 @@ def create_order_view(request):
                 messages.success(request, "Заказан столик без блюд.")
                 messages.error(request, "Cо своими напитками и едой нельзя!")
 
+            # Создать объект формы с данными из запроса
             order_form = OrderForm(request.POST)
-
+            # Проверить данные на валидность
             if order_form.is_valid():
-                order = order_form.save()  # Сохраняем заказ
+                # Сохранить заказ
+                order = order_form.save()
                 try:
                     # Сохраняем все блюда для этого заказа
                     for item in menu_items:
