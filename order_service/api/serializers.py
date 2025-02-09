@@ -1,3 +1,4 @@
+from decimal import Decimal
 from jsonschema import ValidationError
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
@@ -18,11 +19,9 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
 
-    # items = OrderItemSerializer(many=True)
-
     table_number = serializers.IntegerField(min_value=1)
     total_price = serializers.DecimalField(
-        max_digits=10, decimal_places=2, min_value=0.00
+        max_digits=10, decimal_places=2, default=Decimal("0.00")
     )
     # Вывод по-русски
     status = serializers.CharField(source="get_status_display", read_only=True)
