@@ -10,6 +10,7 @@ from .views import (
     main,
     search_order_list,
     add_dich,
+    get_revenue,
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path("filter-order/", search_order_list, name="search_order_list"),
     path("dish-delete/<int:pk>/", delete_dich, name="dish_delete"),
     path("dich-add/<int:pk>/", add_dich, name="add_dich"),
+    path("revenue/", get_revenue, name="how_many_are_there"),
 ]

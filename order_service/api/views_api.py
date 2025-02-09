@@ -36,7 +36,6 @@ def response(order: object) -> dict[str, int | str, list[dict[str, str | int]]]:
 class OrderViewSet(viewsets.ModelViewSet):
     """ViewSet для управления заказами."""
 
-    # queryset = Order.objects.all()
     serializer_class = OrderSerializer
     serializer_create_class = CreateOrderSerializer
 
@@ -45,7 +44,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Создать заказ",
-        description="Этот метод создает новый заказ. Необходимо указать номер стола и блюда.",
+        description="Этот метод создает новый заказ. Необходимо указать номер стола, блюда и цену",
         request=serializer_create_class,
         examples=[
             OpenApiExample(

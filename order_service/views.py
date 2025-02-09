@@ -111,7 +111,6 @@ def create_order_view(request):
     if request.method == "POST":
         # Если форма для блюда была отправлена
         if "add_item" in request.POST:
-
             # Инициализация форм для добавления блюда и оформления заказа
             # с переданными данными из POST-запроса
             menu_item_form = MenuItemForm(request.POST)
@@ -131,11 +130,11 @@ def create_order_view(request):
                 logger.info(request.session)
                 # Очищаем форму после отправки
                 menu_item_form = MenuItemForm()
-
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
             # Проверяет, есть ли в заказе блюда
             if request.session["menu_items"] == []:
+                # Сообщение на страницу
                 messages.success(request, "Заказан столик без блюд.")
                 messages.error(request, "Cо своими напитками и едой нельзя!")
 
@@ -178,27 +177,29 @@ def create_order_view(request):
 
 
 def delete_dich(request, pk: int) -> None:
-    """Удаляет блюдо из заказа и перенаправляет
+    """
+    Удаляет блюдо из заказа и перенаправляет
     обратно в детали заказа.
     """
     try:
         # Получить объект
         dish = get_object_or_404(OrderItem, pk=pk)
-
         # Удал объект
         dish.delete()
-
         # Успешное сообщение
         messages.success(request, "Блюдо успешно удалено из заказа.")
     except Exception as e:
         # Ошибки, которые могут возникнуть
         messages.error(request, f"Произошла ошибка при удалении блюда: {str(e)}")
-
     # Перенаправить на страницу с деталями заказа
     return redirect("order_detail", pk=dish.order.pk)
 
 
 def add_dich(request, pk: int):
+    """
+    Добавляет блюдо в заказ и перенаправляет
+    обратно в детали заказа.
+    """
     if request.method == "POST":
         product_name = request.POST.get("product_name")
         price = request.POST.get("price")
@@ -218,6 +219,14 @@ def add_dich(request, pk: int):
     # Перенаправить на страницу с деталями заказа
     return redirect("order_detail", pk)
 
-    # order_item.product = product_name
-    # order_item.price = price
-    # order_item.save()
+
+def get_revenue(request):
+    """Считает выручку заказов со статусом 'Оплачено'"""
+
+    # Получить объекты со статусом 'Оплачено'
+    sum_many = Order.objects.filter(status="paid")
+    # Получить сумму итератора из сумм каждого заказа
+    revenue = sum(_.total_price for _ in sum_many)
+    print(revenue)
+
+    return render(request, "orders/order_revenue.html", {"revenue": revenue})
