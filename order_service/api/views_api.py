@@ -45,7 +45,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         summary="Создать заказ",
-        description="Создаёт новый заказ с блюдами.",
+        description="Этот метод создает новый заказ. Необходимо указать номер стола и блюда.",
         request=serializer_create_class,
         examples=[
             OpenApiExample(
@@ -120,7 +120,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                     response_data = response(order)
 
                     # Возвращает успешный ответ
-                    return Response(response_data, status=status.HTTP_200_UPDATED)
+                    return Response(response_data, status=status.HTTP_200_OK)
                 else:
                     return Response(
                         serializer.errors, status=status.HTTP_400_BAD_REQUEST
