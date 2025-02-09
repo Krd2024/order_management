@@ -14,13 +14,44 @@
         </p>
       </div>
       <hr />
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#formModal">Добавить блюдо в заказ</button>
+      <hr />
+      <!-- Модальное окно -->
+      <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="formModalLabel">Выбор блюда</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+              <!-- форма -->
+              <form method="post" action="{% url 'add_dich' order.id %}">
+                {% csrf_token %}
 
-      <h3 class="mt-4">На столе:</h3>
+                <div class="mb-3">
+                  <label for="product_name" class="form-label">Наименование</label>
+                  <input type="text" class="form-control" id="product_name" name="product_name" required />
+                </div>
+
+                <div class="mb-3">
+                  <label for="price" class="form-label">Цена</label>
+                  <input type="number" class="form-control" id="price" name="price" required />
+                </div>
+
+                <button type="submit" class="btn btn-success">Отправить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="mt-4">В заказе:</h3>
       <ul class="list-group mb-4">
         {% for item in order.items.all %}
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ item.product_name }}
-            <span class="badge bg-secondary">{{ item.price }} руб. <a href="{% url 'dish_delete' item.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">❌</a></span>
+            <span class="badge bg-success">{{ item.price }} руб. <a href="{% url 'dish_delete' item.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">❌</a></span>
             {% comment %} <a href="{% url 'order_delete' order.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">❌</a> {% endcomment %}
           </li>
         {% endfor %}

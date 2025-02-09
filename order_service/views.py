@@ -155,7 +155,6 @@ def create_order_view(request):
                         )
                     # Очистить список блюд
                     request.session["menu_items"] = []
-                    count_product = 0
                     messages.success(request, "Заказ успешно создан!")
                     return redirect("order_list")
                 except Exception as e:
@@ -178,10 +177,47 @@ def create_order_view(request):
     )
 
 
-def dish_delete(request, pk):
+def delete_dich(request, pk: int) -> None:
     """Удаляет блюдо из заказа и перенаправляет
     обратно в детали заказа.
     """
-    dish = get_object_or_404(OrderItem, pk=pk)
-    dish.delete()
+    try:
+        # Получить объект
+        dish = get_object_or_404(OrderItem, pk=pk)
+
+        # Удал объект
+        dish.delete()
+
+        # Успешное сообщение
+        messages.success(request, "Блюдо успешно удалено из заказа.")
+    except Exception as e:
+        # Ошибки, которые могут возникнуть
+        messages.error(request, f"Произошла ошибка при удалении блюда: {str(e)}")
+
+    # Перенаправить на страницу с деталями заказа
     return redirect("order_detail", pk=dish.order.pk)
+
+
+def add_dich(request, pk: int):
+    if request.method == "POST":
+        product_name = request.POST.get("product_name")
+        price = request.POST.get("price")
+
+        if product_name and price:
+            try:
+                # Получить объект
+                order = get_object_or_404(Order, id=pk)
+                # Обновить заказ (добавить блюдо)
+                OrderItem.objects.create(
+                    order=order, product_name=product_name, price=price
+                )
+                messages.success(request, f"{product_name} добавлен(а)!")
+            except Exception as e:
+                # Ошибки, которые могут возникнуть
+                messages.error(request, f"Произошла ошибка: {str(e)}")
+    # Перенаправить на страницу с деталями заказа
+    return redirect("order_detail", pk)
+
+    # order_item.product = product_name
+    # order_item.price = price
+    # order_item.save()

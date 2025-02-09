@@ -47,7 +47,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 SPECTACULAR_SETTINGS = {
-    "TITLE": "API для CRUD операций ",
+    "TITLE": "API для работы с заказами и блюдами",
     "DESCRIPTION": """
         Этот API предоставляет функции для работы с заказами, включая:
 
@@ -57,7 +57,7 @@ SPECTACULAR_SETTINGS = {
         - Обновление заказа по ID
         - Удаление заказа по ID
 
-        Пример запроса создания заказа с блюдами  для внешних запросов:
+        Пример запроса создания заказа с блюдами:
         
         Для отправки POST-запроса:
 
