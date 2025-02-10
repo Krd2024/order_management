@@ -13,13 +13,38 @@ from order_service.models import Order
 
 
 class CastomSerializer:
+    """
+    Сериализатор для представления объекта заказа в виде словаря.
+
+    order (object): Экземпляр заказа, содержащий информацию о номере стола, блюдах и общей стоимости.
+
+    object_to_dict() -> dict:
+        Преобразует объект заказа в словарь с ключами:
+            - "Заказ": ID заказа.
+            - "Стол": Номер стола.
+            - "На столе": Список блюд с названиями и ценами.
+            - "Итого": Общая сумма заказа.
+    """
+
     def __init__(
         self, order: object
     ) -> dict[str, int | str, list[dict[str, str | int]]]:
+        """
+        Инициализация сериализатора с объектом заказа.
+
+          - order (object): Экземпляр модели Order.
+        """
 
         self.order = order
 
     def object_to_dict(self):
+        """
+        Преобразует объект заказа в удобный для чтения словарь.
+
+        Returns:
+            dict: Словарь с данными заказа.
+        """
+
         response_data = {
             "Заказ": self.order.id,
             "Стол": self.order.table_number,
@@ -36,11 +61,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     """ViewSet для управления заказами.
 
     Позволяет:
-    - Получать список всех заказов.
-    - Получать детали конкретного заказа.
-    - Создавать новый заказ.
-    - Обновлять существующий заказ.
-    - Удалять заказ.
+        - Получать список всех заказов.
+        - Получать детали конкретного заказа.
+        - Создавать новый заказ.
+        - Обновлять существующий заказ.
+        - Удалять заказ.
     """
 
     # Сериализатор для данных заказа
@@ -86,6 +111,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
                     # Формирует ответ
                     response_obj = CastomSerializer(order)
+                    # Вызвать метод преобразования объекта в словарь
                     response_data = response_obj.object_to_dict()
 
                     # Возвращает успешный ответ
@@ -167,7 +193,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     @extend_schema(
         summary="Получить заказ",
         description="Получить конкретный заказ по ID",
-        # request=serializer_class,
     )
     def retrieve(self, request, pk: int) -> Response:
         """Получает один заказ с деталями.
@@ -181,7 +206,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         order: Order = get_object_or_404(self.get_queryset(), pk=pk)
 
         # Формирует ответные данные
-        # response_data: dict[str, Any] = response(order)
         response_obj = CastomSerializer(order)
         response_data = response_obj.object_to_dict()
 
