@@ -1,16 +1,8 @@
-from decimal import Decimal
-from jsonschema import ValidationError
 from rest_framework import serializers
 from order_service.models import Order, OrderItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderItem
-        fields = "__all__"
-
-
-class OrderItemCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
@@ -18,27 +10,13 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-
-    table_number = serializers.IntegerField(min_value=1)
-    total_price = serializers.DecimalField(
-        max_digits=10, decimal_places=2, default=Decimal("0.00")
-    )
-    # Вывод по-русски
-    status = serializers.CharField(source="get_status_display", read_only=True)
-
-    class Meta:
-        model = Order
-        fields = ["id", "table_number", "total_price", "status"]
-
-
-class CreateOrderSerializer(serializers.ModelSerializer):
     """Сериализатор для заказа."""
 
-    items = OrderItemCreateSerializer(many=True)
+    items = OrderItemSerializer(many=True)
 
     class Meta:
         model = Order
-        fields = ["table_number", "items"]
+        fields = ["id", "table_number", "items"]
 
     def validate(self, data):
         """Проверяет является ли число положительным"""
@@ -52,10 +30,36 @@ class CreateOrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создание заказа и его позиций."""
 
+        # Извлекает список блюд из запроса
         items_data = validated_data.pop("items")
+
+        # Создать заказ
         order = Order.objects.create(**validated_data)
 
+        # Добавить блюда в заказ
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
 
         return order
+
+    def update(self, instance, validated_data):
+        """Обновление существующего заказа и его позиций.
+        Удаляются все блюда из заказа и записываюся новые
+        """
+
+        # Обновляет поле заказа (номер стола)
+        instance.table_number = validated_data.get(
+            "table_number", instance.table_number
+        )
+        instance.save()
+
+        # Получает блюда
+        items_data = validated_data.get("items", [])
+
+        # Удалить список блюд перед обновлением
+        OrderItem.objects.filter(order=instance).delete()
+        # Обновить закз новыми блюдами
+        for item_data in items_data:
+            OrderItem.objects.create(order=instance, **item_data)
+
+        return instance

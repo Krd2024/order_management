@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import OrderForm, MenuItemForm
@@ -9,7 +8,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (
     ListView,
     DetailView,
-    # CreateView,
     UpdateView,
     DeleteView,
 )
@@ -35,22 +33,11 @@ class OrderDetailView(DetailView):
     template_name = "orders/order_detail.html"
 
 
-# class OrderCreateView(CreateView):
-#     """Создание заказа"""
-
-#     model = Order
-#     form_class = OrderForm
-#     template_name = "orders/order_form.html"
-#     success_url = reverse_lazy("order_list")
-
-
 class OrderUpdateView(UpdateView):
     """Обновление заказа"""
 
     model = Order
     form_class = OrderForm
-    # menu_item_form = MenuItemForm
-    # template_name = "orders/create_order.html"
     template_name = "orders/order_form.html"
     success_url = reverse_lazy("order_list")
 
@@ -129,6 +116,7 @@ def create_order_view(request):
                 logger.info(request.session)
                 # Очищаем форму после отправки
                 menu_item_form = MenuItemForm()
+
         # Если форма для заказа была отправлена
         elif "submit_order" in request.POST:
             # Проверяет, есть ли в заказе блюда
@@ -196,13 +184,13 @@ def delete_dich(request, pk: int) -> None:
 
 def add_dich(request, pk: int):
     """
-    Добавляет блюдо в заказ и перенаправляет
+    Добавляет блюдо в ранее созданный заказ и перенаправляет
     обратно в детали заказа.
     """
     if request.method == "POST":
         product_name = request.POST.get("product_name")
         price = request.POST.get("price")
-
+        # Если комплект (блюдо + цена)
         if product_name and price:
             try:
                 # Получить объект
