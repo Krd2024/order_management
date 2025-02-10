@@ -74,3 +74,15 @@ http://127.0.0.1:8000/api/v1/docs/
 pytest -v
 ```
 ---
+
+![2025-02-09_17-19-39](https://github.com/user-attachments/assets/c211f0dc-7765-420d-9e28-f092cfe2486b)
+![2025-02-10_14-53-48](https://github.com/user-attachments/assets/e6941d24-27d5-41cb-94c6-6aeb34b8cfb8)
+![2025-02-09_20-50-27](https://github.com/user-attachments/assets/0f78e4db-353f-460d-b95a-fb9cea0bec8d)
+![2025-02-10_14-55-41](https://github.com/user-attachments/assets/82501b80-8e32-4ecf-93e8-34ec5d3d3c5d)
+
+---
+![2025-02-09_10-47-13](https://github.com/user-attachments/assets/f28033ca-f920-480e-b65b-ca7d24cae1c8)
+
+---
+![http___127 0 0 1_8000_api_v1_orders_ - FastAPI_test 10 02 2025 19_27_42](https://github.com/user-attachments/assets/f33eb80c-786b-41b3-8a22-39fb45f30cea)
+![http___127 0 0 1_8000_api_v1_orders_3_ - FastAPI_test 10 02 2025 19_42_45](https://github.com/user-attachments/assets/0d94025f-1ee6-4435-9186-8c3c7a5e44b4)
