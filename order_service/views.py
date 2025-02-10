@@ -126,7 +126,6 @@ def create_order_view(request):
                 )
                 # Сохраняем в сессии
                 request.session["menu_items"] = menu_items
-
                 logger.info(request.session)
                 # Очищаем форму после отправки
                 menu_item_form = MenuItemForm()
