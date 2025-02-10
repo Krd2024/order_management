@@ -65,7 +65,7 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
-# После запуска проекти API для работы с приложение доступно:
+# После запуска проекта API для работы с приложение доступно:
 ```bash
 http://127.0.0.1:8000/api/v1/docs/
 ```
@@ -73,3 +73,4 @@ http://127.0.0.1:8000/api/v1/docs/
 ```bash
 pytest -v
 ```
+---
