@@ -6,6 +6,7 @@ from .views import (
     OrderUpdateView,
     create_order_view,
     delete_dich,
+    list_sorted,
     main,
     search_order_list,
     add_dich,
@@ -23,4 +24,5 @@ urlpatterns = [
     path("<int:pk>/dich-delete/", delete_dich, name="dish_delete"),
     path("<int:pk>/dich-add/", add_dich, name="add_dich"),
     path("revenue/", get_revenue, name="how_many_are_there"),
+    path("list/sorted/<str:choice>", list_sorted, name="list_sorted"),
 ]

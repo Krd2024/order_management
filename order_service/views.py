@@ -1,10 +1,11 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import OrderForm, MenuItemForm
-from .models import Order, OrderItem
 from loguru import logger
 
-from django.shortcuts import render, get_object_or_404, redirect
+from .forms import OrderForm, MenuItemForm
+from .models import Order, OrderItem
 from django.views.generic import (
     ListView,
     DetailView,
@@ -46,12 +47,12 @@ class OrderDeleteView(DeleteView):
     """Удаление заказа"""
 
     model = Order
-    # Прейти на страницу подтверждения удаления
+    # Перейти на страницу подтверждения удаления
     template_name = "orders/order_confirm_delete.html"
     success_url = reverse_lazy("order_list")
 
 
-def search_order_list(request):
+def search_order_list(request) -> QuerySet:
     """
     Функция для поиска заказов по разным параметрам.
 
@@ -89,7 +90,7 @@ def search_order_list(request):
     return render(request, "orders/orders_list.html", {"orders": orders})
 
 
-def create_order_view(request):
+def create_order_view(request) -> None:
     """Создание заказа и добавление блюд в заказ.
     Создвёт список из блюд и цены перед созданием заказа
     """
@@ -182,7 +183,7 @@ def delete_dich(request, pk: int) -> None:
     return redirect("order_detail", pk=dish.order.pk)
 
 
-def add_dich(request, pk: int):
+def add_dich(request, pk: int) -> None:
     """
     Добавляет блюдо в ранее созданный заказ и перенаправляет
     обратно в детали заказа.
@@ -207,7 +208,7 @@ def add_dich(request, pk: int):
     return redirect("order_detail", pk)
 
 
-def get_revenue(request):
+def get_revenue(request) -> int:
     """Считает выручку заказов со статусом 'Оплачено'"""
 
     # Получить объекты со статусом 'Оплачено'
@@ -217,3 +218,14 @@ def get_revenue(request):
     print(revenue)
 
     return render(request, "orders/order_revenue.html", {"revenue": revenue})
+
+
+def list_sorted(request, choice: str) -> QuerySet:
+    """Сортировка по статусу"""
+
+    try:
+        context = Order.objects.filter(status=choice)
+        return render(request, "orders/orders_list.html", {"orders": context})
+    except Exception as e:
+        logger.error(f"Ошибка {e}")
+        return redirect("order_list")
