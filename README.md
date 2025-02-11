@@ -90,5 +90,8 @@ pytest -v
 ![2025-02-09_10-47-13](https://github.com/user-attachments/assets/f28033ca-f920-480e-b65b-ca7d24cae1c8)
 
 ---
+![2025-02-11_10-02-51](https://github.com/user-attachments/assets/452dbbfd-c0cb-4edd-966c-2cbc32e1b8e5)
+
+---
 ![http___127 0 0 1_8000_api_v1_orders_ - FastAPI_test 10 02 2025 19_27_42](https://github.com/user-attachments/assets/f33eb80c-786b-41b3-8a22-39fb45f30cea)
 ![http___127 0 0 1_8000_api_v1_orders_3_ - FastAPI_test 10 02 2025 19_42_45](https://github.com/user-attachments/assets/0d94025f-1ee6-4435-9186-8c3c7a5e44b4)
